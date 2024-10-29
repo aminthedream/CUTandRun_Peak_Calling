@@ -1,1 +1,1 @@
-# CUTandRun_Peak_Calling
+# Benchmarking Peak Calling Methods for CUT&RUN
