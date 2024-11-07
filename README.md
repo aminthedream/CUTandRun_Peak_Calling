@@ -7,7 +7,7 @@ Cleavage Under Targets and Release Using Nuclease (CUT&RUN) has rapidly gained p
 
 If you use the scripts or methods from this repository, please cite the preprint:
 
-Exploring Adaptive Introgression in Modern Human Circadian Rhythm Genes
+Benchmarking Peak Calling Methods for CUT&RUN
 
 Amin Nooranikhojasteh, Ghazaleh Tavallaee, Nicholas Khuu and Elias Orouji 
 bioRxiv, 2024. DOI: 
