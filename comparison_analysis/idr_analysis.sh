@@ -18,10 +18,7 @@ process_peaks() {
     local mark=$1
     local celltype=$2
     local caller=$3
-    
-    echo "Processing $mark $celltype $caller"
-    
-    # Modified find command to ensure proper sorting by replicate number
+    echo "Processing $mark $celltype $caller"    
     mapfile -t files < <(find $SNR_DIR -name "*_${mark}_${celltype}_R*_${caller}.chip_peak_coverage.sorted_all.txt" | sort -V)
     
     if [ ${#files[@]} -lt 2 ]; then
@@ -30,12 +27,8 @@ process_peaks() {
     fi
     
     echo "Found ${#files[@]} replicates"
-    
-    # Create tmp directory for this set
     tmp_dir="${OUTPUT_DIR}/tmp_${mark}_${celltype}_${caller}"
     mkdir -p $tmp_dir
-    
-    # Convert each file to narrowPeak format
     for file in "${files[@]}"; do
         # Extract replicate number more carefully
         rep_num=$(echo "$file" | grep -o "_R[0-9]*_" | sed 's/_R\([0-9]*\)_/\1/')
@@ -44,7 +37,6 @@ process_peaks() {
         awk -v OFS="\t" '{print $1,$2,$3,"peak_"NR,$4,".",$4,1,1,0}' "$file" > "${tmp_dir}/rep${rep_num}.narrowPeak"
     done
     
-    # Run IDR on consecutive pairs
     for ((i=0; i<${#files[@]}-1; i++)); do
         j=$((i+1))
         # Extract replicate numbers more carefully
@@ -61,7 +53,6 @@ process_peaks() {
             --plot \
             --log-output-file "${output}.log"
         
-        # The plots will be created in the current directory with prefix 'idr'
         # Move them to a better location with more informative names
         if [ -f "idr.png" ]; then
             mv idr.png "${OUTPUT_DIR}/${mark}_${celltype}_${caller}_R${rep1_num}_vs_R${rep2_num}.png"
@@ -72,15 +63,13 @@ process_peaks() {
     done
 }
 
-# Process all combinations
+
 find $SNR_DIR -name "*chip_peak_coverage.sorted_all.txt" | while read file; do
     # Extract components from filename
     basename=$(basename "$file" .chip_peak_coverage.sorted_all.txt)
     mark=$(echo "$basename" | cut -d'_' -f2)
     celltype=$(echo "$basename" | cut -d'_' -f3)
     caller=$(echo "$basename" | rev | cut -d'_' -f1 | rev)
-    
-    # Use as key to avoid processing same combination multiple times
     key="${mark}_${celltype}_${caller}"
     
     # Process if we haven't seen this combination before
@@ -90,7 +79,5 @@ find $SNR_DIR -name "*chip_peak_coverage.sorted_all.txt" | while read file; do
     fi
 done
 
-# Cleanup temporary files
 rm -f ${OUTPUT_DIR}/.processed_*
-
-echo "IDR analysis completed"
+echo "IDR is completed"
