@@ -1,22 +1,13 @@
 #!/bin/bash
-#SBATCH -J bench_macs2_4D
-#SBATCH -N 1
-#SBATCH -c 1
-#SBATCH -p himem
-#SBATCH --time=1-00:00:00
-#SBATCH --mem=50G
-#SBATCH -o benchmarking_macs2.log
-#SBATCH -e benchmarking_macs2.err
 
 
-# Set the base directories
 BAM_DIR="/cluster/projects/epigenomics/Aminnn/CNR/EpigenomeLab/EPI_P003_CNR_MM10_07172022/Four_DN/batch_2/sorted_bams/filese_renamed_adjusted/HFFc6"
 OUTPUT_DIR="/cluster/projects/epigenomics/Aminnn/CNR/EpigenomeLab/EPI_P003_CNR_MM10_07172022/Four_DN/batch_2/sorted_bams/filese_renamed_adjusted/results_2/MACS2/HFFc6"
 
-# Create output directory
+
 mkdir -p "$OUTPUT_DIR"
 
-# Function to find matching IgG control
+
 find_igg_control() {
     local basename=$1
     local celltype=$(echo $basename | cut -d'_' -f3-)
@@ -34,7 +25,6 @@ find_igg_control() {
     fi
 }
 
-# Function to run MACS2
 run_macs2() {
     local bam_file=$1
     local output_prefix=$2
@@ -65,11 +55,8 @@ run_macs2() {
           -q 0.05 \
           $additional_params
     fi
-    
-    echo "MACS2 completed for ${output_prefix}"
 }
 
-# Process all BAM files
 for bam_file in ${BAM_DIR}/*.bam; do
     # Skip index files and IgG files
     if [[ $bam_file == *.bai ]] || [[ $bam_file == *IgG* ]]; then
@@ -88,8 +75,6 @@ for bam_file in ${BAM_DIR}/*.bam; do
     else
         echo "No matching control found"
     fi
-    
-    # Determine the histone mark
     if [[ $base_name == *"H3K27me3"* ]]; then
         macs2_params="--broad"
     else
@@ -100,4 +85,3 @@ for bam_file in ${BAM_DIR}/*.bam; do
     run_macs2 "$bam_file" "$base_name" "$control_file" "$macs2_params"
 done
 
-echo "All BAM files have been processed with MACS2."
