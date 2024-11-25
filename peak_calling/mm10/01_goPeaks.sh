@@ -1,8 +1,8 @@
 #!/bin/bash
 
 
-BAM_DIR="/cluster/projects/epigenomics/Aminnn/CNR/EpigenomeLab/EPI_P003_CNR_MM10_07172022/analysis/02_alignment/bowtie2/target/adjusted_replicated"
-OUT_DIR="${BAM_DIR}/results/GOPEAKS"
+BAM_DIR="./inputs/bams"
+OUT_DIR="./outputs/GOPEAKS"
 
 
 mkdir -p $OUT_DIR
@@ -39,7 +39,7 @@ for bam_file in ${BAM_DIR}/*.bam; do
     base_name=$(basename "$bam_file" .target.markdup.bam)
     echo "Processing file $current_file of $total_files: $bam_file"
     
-    # which histone mark
+    # which histone mark, if H3K27me3 , add --mdist 3000 --broad option
     if [[ $base_name == *"H3K27me3"* ]]; then
         run_gopeaks "$bam_file" "${base_name}_peaks" "--mdist 3000 --broad"
     else
@@ -47,4 +47,4 @@ for bam_file in ${BAM_DIR}/*.bam; do
     fi
 done
 
-echo "All files have been processed with goPeaks."
+
