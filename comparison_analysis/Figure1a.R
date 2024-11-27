@@ -1,6 +1,4 @@
 # Benchmarking Peak Calling Method for CUT&RUN
-# Author: Elias Orouji
-# Date: November 4, 2024
 # Manuscript Title: "Benchmarking Peak Calling Methods for CUT&RUN"
 # Figure Number: [Figure 1a]
 
@@ -12,18 +10,9 @@
 # - Ensure the appropriate input files are loaded for each figure, and customize the parameters as needed.
 
 
-# Set working directory
-setwd("~/Desktop/R_scripts/")
+#setwd("~/Desktop/R_scripts/")
+#rm(list = ls())
 
-# Clean up environment
-rm(list = ls())
-
-# Install required packages if not already installed
-required_packages <- c("readxl", "dplyr", "ggplot2", "tidyr", "ggstatsplot", "patchwork")
-new_packages <- required_packages[!(required_packages %in% installed.packages()[,"Package"])]
-if(length(new_packages)) install.packages(new_packages)
-
-# Load required libraries
 library(readxl)
 library(dplyr)
 library(ggplot2)
@@ -33,13 +22,12 @@ library(patchwork)
 
 # Load the data from the Excel file
 file_path <- "/Users/elias.orouji/Desktop/R_scripts/final_peak_analysis_summary_all.xlsx"
-if (file.exists(file_path)) {
-  data <- read_excel(file_path)
-} else {
-  stop("Error: File does not exist. Please check the file path.")
-}
+# if (file.exists(file_path)) {
+#   data <- read_excel(file_path)
+# } else {
+#   stop("Error: File does not exist; Please check the file path.")
+# }
 
-# Rename columns to match the expected format
 colnames(data) <- tolower(colnames(data))
 data <- data %>%
   rename(
@@ -48,16 +36,13 @@ data <- data %>%
     sample = sample
   )
 
-# Ensure required columns are present
-expected_columns <- c("peak_caller", "histone_mark", "sample", "total_peaks")
-if (!all(expected_columns %in% colnames(data))) {
-  stop("Error: Required columns are missing from the data. Please check the data format.")
-}
+# expected_columns <- c("peak_caller", "histone_mark", "sample", "total_peaks")
+# if (!all(expected_columns %in% colnames(data))) {
+#   stop("Error: Required columns are missing from the data. Please check the data format.")
+# }
 
-# Convert peak_caller to a factor
 data$peak_caller <- as.factor(data$peak_caller)
 
-# Generate and display violin plots for each histone mark separately
 histone_marks <- unique(data$histone_mark)
 
 for (mark in histone_marks) {
