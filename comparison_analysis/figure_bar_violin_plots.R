@@ -1,4 +1,3 @@
-############### PART 1: SETUP AND BASIC FUNCTIONS ###############
 library(tidyverse)
 library(GenomicRanges)
 library(ComplexUpset)
@@ -85,7 +84,7 @@ df_to_granges <- function(df) {
   )
 }
 
-# Test function
+# Test the function
 test_name_extraction <- function(filename) {
   info <- get_sample_info(filename)
   cat("File:", filename, "\n")
@@ -103,7 +102,7 @@ test_name_extraction <- function(filename) {
 
 ############### PART 2: PEAK ANALYSIS FUNCTIONS ###############
 
-# Main analysis function for each histone mark and sample
+# Main analysis function 
 analyze_histone_mark_sample <- function(file_paths, histone_mark, sample_name) {
   results <- list()
   method_peaks <- list()
@@ -208,7 +207,6 @@ analyze_histone_mark_sample <- function(file_paths, histone_mark, sample_name) {
     cat("Finding consensus peaks...\n")
     gr_list <- lapply(methods, function(m) df_to_granges(method_peaks[[m]]))
     
-    # Start with first set
     consensus_gr <- gr_list[[1]]
     
     # Iteratively find overlaps with each remaining set
@@ -234,7 +232,6 @@ analyze_histone_mark_sample <- function(file_paths, histone_mark, sample_name) {
   return(list(results = results, method_peak_counts = method_peak_counts))
 }
 
-# Function to check available files and potential issues
 check_available_files <- function(file_paths) {
   cat("\nChecking available files:\n")
   cat("=======================\n")
@@ -268,20 +265,16 @@ check_available_files <- function(file_paths) {
 
 ############### PART 3: FILE GENERATION FUNCTIONS ###############
 
-# Function to write peaks to BED format
 write_peaks_to_bed <- function(peaks_df, file_path) {
   write.table(peaks_df, file = file_path, 
               sep = "\t", quote = FALSE, row.names = FALSE, col.names = FALSE)
 }
 
-# Function to generate all peak files
 generate_peak_files <- function(method_peaks, results, histone_mark, sample_name) {
-  # Create output directory if it doesn't exist
   dir.create("peak_files", showWarnings = FALSE)
   
   methods <- names(method_peaks)
   
-  # Function to get peaks from GRanges object
   granges_to_df <- function(gr) {
     data.frame(
       chr = seqnames(gr),
@@ -290,7 +283,6 @@ generate_peak_files <- function(method_peaks, results, histone_mark, sample_name
     )
   }
   
-  # 1. Generate unique peak files for each method
   cat("\nGenerating unique peak files...\n")
   for (method in methods) {
     current_df <- method_peaks[[method]]
