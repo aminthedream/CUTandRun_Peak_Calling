@@ -1,6 +1,4 @@
 # Benchmarking Peak Calling Method for CUT&RUN
-# Author: Elias Orouji
-# Date: November 6, 2024
 # Manuscript Title: "Benchmarking Peak Calling Methods for CUT&RUN"
 # Figure Number: [Figure 5]
 
@@ -12,31 +10,27 @@
 # - Ensure the appropriate input files are loaded for each figure, and customize the parameters as needed.
 
 # Clean up environment
-rm(list = ls())
+#rm(list = ls())
 
 library(tidyverse)
 library(readxl)
 library(ggpubr)
 
-# Set working directory
 setwd("~/Desktop/R_scripts/")
 
 # Load the data
 file_path <- "all_performance_metrics.xlsx"
 data <- read_excel(file_path)
 
-# Check data structure
+
 head(data)
 
-# Rename columns to match expected names
 data <- data %>% rename(Score = F1)
 
-# Split the data for each metric and histone mark
 data_f1 <- data %>% select(Method, Score, HistoneMark) %>% mutate(Metric = "F1")
 data_precision <- data %>% select(Method, Precision, HistoneMark) %>% rename(Score = Precision) %>% mutate(Metric = "Precision")
 data_recall <- data %>% select(Method, Recall, HistoneMark) %>% rename(Score = Recall) %>% mutate(Metric = "Recall")
 
-# Function to create plot for each metric with statistical tests, divided by histone mark
 plot_metric_by_histone <- function(data, metric_name) {
   ggboxplot(data, x = "Method", y = "Score", fill = "Method", palette = "jco", facet.by = "HistoneMark") +
     stat_compare_means(method = "anova", label = "p.format", label.y = max(data$Score, na.rm = TRUE) * 1.1) +
@@ -47,7 +41,6 @@ plot_metric_by_histone <- function(data, metric_name) {
     theme_minimal()
 }
 
-# Plot each metric divided by histone mark
 plot_f1_histone <- plot_metric_by_histone(data_f1, "F1")
 plot_precision_histone <- plot_metric_by_histone(data_precision, "Precision")
 plot_recall_histone <- plot_metric_by_histone(data_recall, "Recall")
